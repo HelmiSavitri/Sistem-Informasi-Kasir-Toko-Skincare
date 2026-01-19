@@ -1,0 +1,105 @@
+/* FORCE OVERRIDE TEMPLATE */
+.body-wrapper .dashboard-card {
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(190, 120, 151, 0.12);
+    border: 1px solid #e981a9;
+    background: #f9f9f9;
+}
+
+/* Table */
+.body-wrapper .table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.body-wrapper .table thead th {
+    background: #f4e6e6;
+    color: #a14b6f;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 14px;
+    border: none;
+}
+
+
+.body-wrapper .table tbody td {
+    background: #f9f9f9;
+    border: 1px solid #e2b9c8;
+    color: #6b4b5a;
+    padding: 15px;
+}
+
+/* Hover */
+.body-wrapper .table-hover tbody tr:hover td {
+    background-color: #fff5f8;
+}
+
+/* Buttons */
+.body-wrapper .btn-primary {
+    background-color: #be7897;
+    border: none;
+    color: #fff;
+}
+
+.body-wrapper .btn-primary:hover {
+    background-color: #a96382;
+}
+
+.body-wrapper .btn-warning {
+    background-color: #fff5f8;
+    color: #9d6b80;
+    border: 1px solid #f1dfe6;
+}
+
+.body-wrapper .btn-danger {
+    background-color: #fff1f2;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+}
+
+/* Badge uang */
+.body-wrapper .table .badge {
+    background-color: #ec4899;
+    color: #fff;
+    border-radius: 8px;
+}
+
+/* Kolom foto produk - kecil & rapi */
+.body-wrapper .table .product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #f1dfe6;
+}
+
+/* Supaya kolom foto tidak melebar */
+.body-wrapper .table td.foto-produk,
+.body-wrapper .table th.foto-produk {
+    width: 100px;
+    text-align: center;
+}
+
+/* ===============================
+   ICON DI DASHBOARD CARD
+================================ */
+.body-wrapper .dashboard-card i,
+.body-wrapper .dashboard-card svg {
+    color: #f472b6 !important;   /* pink feminin */
+    opacity: 0.35 !important;
+    font-size: 48px;
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    z-index: 1;
+}
+
+/* Jika card pakai position relative */
+.body-wrapper .dashboard-card {
+    position: relative;
+}
+
+
+
+
