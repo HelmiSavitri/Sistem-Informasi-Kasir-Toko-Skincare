@@ -12,24 +12,27 @@ class TransactionsController extends Controller
     /**
      * Halaman daftar transaksi.
      */
+    // Cari function index di TransactionController
     public function index()
     {
-        $transactions = Transaction::latest()->get();
+        // Mengambil data transaksi beserta ratingnya
+        $transactions = \App\Models\Transaction::with('rating')->latest()->get();
 
         return view('admin.transaction.index', [
-            'title'         => 'Transaksi',
-            'transactions'  => $transactions
+            'title' => 'Pembayaran',
+            'transactions' => $transactions
         ]);
     }
-
     /**
      * Halaman create kasir.
      */
     public function create()
     {
-        // Do not clear cart here so added items persist across redirects from addToCart
+        $products = Product::where('stock', '>', 0)->orderBy('name', 'asc')->get();
+
         return view('admin.transaction.create', [
-            'title' => 'Transaksi Kasir'
+            'title'    => 'Transaksi Kasir',
+            'products' => $products // Kirim data produk ke view
         ]);
     }
 
@@ -140,22 +143,27 @@ class TransactionsController extends Controller
         session()->forget('cart');
 
         return redirect()->route('transaction.show', $transaction->id)
-                         ->with('success', 'Transaksi berhasil disimpan!');
+            ->with('success', 'Transaksi berhasil disimpan!');
     }
 
     /**
      * Tampilkan detail transaksi.
      */
+    /**
+     * Tampilkan detail transaksi.
+     */
     public function show($id)
     {
-        $trx = Transaction::with('items.product')->findOrFail($id);
+        // 1. Ambil data dengan eager loading relasi yang dibutuhkan
+        $data = Transaction::with(['items.product', 'rating'])->findOrFail($id);
 
+        // 2. Kirim ke view dengan dua nama variabel (trx dan transaction)
         return view('admin.transaction.show', [
-            'title' => 'Detail Transaksi',
-            'trx'   => $trx
+            'title'       => 'Detail Transaksi',
+            'trx'         => $data,         // Untuk tabel & item (baris 31)
+            'transaction' => $data,         // Untuk bagian rating
         ]);
     }
-
     /**
      * Halaman edit transaksi (opsional).
      */
@@ -215,5 +223,45 @@ class TransactionsController extends Controller
             'title' => 'Cetak Struk',
             'trx'   => $trx
         ]);
+    }
+
+    /**
+     * Hapus produk dari keranjang (session).
+     */
+    public function removeFromCart($index)
+    {
+        $cart = session()->get('cart', []);
+
+        // Cek apakah index tersebut ada di dalam array keranjang
+        if (isset($cart[$index])) {
+            unset($cart[$index]);
+
+            // Re-index array agar index tetap berurutan (mencegah error di foreach)
+            $cart = array_values($cart);
+
+            session()->put('cart', $cart);
+            return back()->with('success', 'Produk dihapus dari keranjang!');
+        }
+
+        return back()->with('error', 'Produk tidak ditemukan di keranjang!');
+    }
+
+    public function storeRating(Request $request)
+    {
+        $request->validate([
+            'transaction_id' => 'required|exists:transactions,id',
+            'score'          => 'required|numeric|min:1|max:5',
+            'comment'        => 'nullable|string'
+        ]);
+
+        \App\Models\Rating::updateOrCreate(
+            ['transaction_id' => $request->transaction_id],
+            [
+                'score'   => $request->score,
+                'comment' => $request->comment,
+            ]
+        );
+
+        return back()->with('success', 'Rating berhasil disimpan!');
     }
 }

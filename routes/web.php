@@ -12,6 +12,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TransactionsController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RatingController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -31,6 +32,8 @@ Route::resource('brand', BrandController::class);
 
 Route::resource('supplier', SupplierController::class);
 
+Route::post('/ratings/store', [RatingController::class, 'store'])->name('ratings.store');
+
 Route::post('/find-product', [TransactionsController::class, 'findProduct'])->name('find.product');
 Route::post('/cart/add', [TransactionsController::class, 'addToCart'])->name('cart.add');
 Route::post('/transaction/pay', [TransactionsController::class, 'store'])->name('transaction.pay');
@@ -48,5 +51,6 @@ Route::get('/laporan/pdf', [ReportController::class, 'pdf'])->name('report.pdf')
 Route::get('/laporan/harian', function () { return redirect()->route('report.index', ['type' => 'daily']); });
 Route::get('/laporan/harian/pdf', function () { return redirect()->route('report.pdf', ['type' => 'daily']); });
 
+Route::delete('/cart/remove/{id}', [App\Http\Controllers\TransactionsController::class, 'removeFromCart'])->name('cart.remove');
 
 require __DIR__ . '/auth.php';

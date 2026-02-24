@@ -36,7 +36,7 @@
                         <td>
                             @if($supplier->brands->count())
                                 @foreach($supplier->brands as $b)
-                                    <span class="badge rounded-pill bg-secondary text-white px-2 me-1">{{ $b->name }}</span>
+                                    <span class="badge rounded-pill bg-secondary text-white px-2 me-1 mb-2">{{ $b->name }}</span>
                                 @endforeach
                             @else
                                 -

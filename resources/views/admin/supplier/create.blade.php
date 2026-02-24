@@ -60,7 +60,7 @@
 
                     {{-- Brands --}}
                     <div class="mb-3">
-                        <label class="form-label">Brands</label>
+                        <label class="form-label">Brand</label>
                         <div class="form-check">
                             @foreach($brands as $brand)
                                 <div class="form-check">

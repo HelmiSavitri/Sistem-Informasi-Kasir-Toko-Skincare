@@ -18,4 +18,10 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionItem::class);
     }
+
+    public function rating()
+    {
+        // Menghubungkan transaksi ke rating berdasarkan transaction_id
+        return $this->hasOne(Rating::class, 'transaction_id');
+    }
 }

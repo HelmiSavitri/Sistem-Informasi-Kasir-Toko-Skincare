@@ -18,6 +18,14 @@ class UserSeeder extends Seeder
             'name' => 'Kasir Toko',
             'email' => 'kasir@lovebeauty.com',
             'password' => Hash::make('kasir'),
+            'role' => 'Kasir',
+        ]);
+
+        User::create([
+            'name' => 'Admin Toko',
+            'email' => 'admin@lovebeauty.com',
+            'password' => Hash::make('admin'),
+            'role' => 'Admin',
         ]);
     }
 }

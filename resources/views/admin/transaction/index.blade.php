@@ -12,14 +12,32 @@
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h5 class="card-title fw-semibold mb-0">Data {{ $title }}</h5>
                 <div class="d-flex align-items-center gap-2">
-                    <a href="{{ route('transaction.create') }}" class="btn btn-primary btn-sm">Tambah Data
-                        {{ $title }}</a>
-                    <form method="GET" action="{{ route('report.pdf') }}" target="_blank" class="d-flex m-0">
-                        <input type="hidden" name="type" value="daily" />
-                        <input type="date" name="date"
-                            value="{{ request('date', \Carbon\Carbon::today()->toDateString()) }}"
-                            class="form-control form-control-sm" />
-                        <button class="btn btn-danger btn-sm ms-2">Cetak PDF</button>
+                    @if (Auth::user()->role == 'Kasir')
+                        <a href="{{ route('transaction.create') }}" class="btn btn-primary btn-sm">
+                            Tambah Data {{ $title }}
+                        </a>
+                    @endif
+
+                    <form method="GET" action="{{ route('report.pdf') }}" target="_blank"
+                        class="d-flex align-items-center gap-2 m-0">
+
+                        <input type="hidden" name="type" value="custom" />
+
+                        <div class="input-group input-group-sm">
+                            <input type="date" name="start_date"
+                                value="{{ request('start_date', \Carbon\Carbon::today()->toDateString()) }}"
+                                class="form-control" title="Tanggal Awal" />
+
+                            <span class="input-group-text bg-light text-muted">s/d</span>
+
+                            <input type="date" name="end_date"
+                                value="{{ request('end_date', \Carbon\Carbon::today()->toDateString()) }}"
+                                class="form-control" title="Tanggal Akhir" />
+                        </div>
+
+                        <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center">
+                            Cetak PDF
+                        </button>
                     </form>
                 </div>
             </div>
@@ -57,7 +75,6 @@
                                 <td>
                                     {{ \Carbon\Carbon::parse($trx->created_at)->format('d-m-Y') }}
                                 </td>
-
                                 <td>
                                     <a href="{{ route('transaction.show', $trx->id) }}"
                                         class="btn btn-info btn-sm me-1 mb-1">Detail</a>
@@ -85,11 +102,18 @@
     </div>
 @endsection
 
+
+
 @section('js')
     <script>
         $(document).ready(function() {
             $('#datatable').DataTable();
         });
+
+        function openRatingModal(id) {
+            $('#modal_transaction_id').val(id);
+            $('#ratingModal').modal('show');
+        }
 
         function confirmDelete(id) {
             swal({
@@ -107,7 +131,10 @@
                             icon: "error"
                         });
                     }
+
+
                 });
         }
     </script>
 @endsection
+

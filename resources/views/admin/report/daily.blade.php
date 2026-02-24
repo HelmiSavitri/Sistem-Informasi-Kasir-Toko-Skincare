@@ -1,78 +1,66 @@
 @extends('admin.layouts.app')
 
 @section('content')
-<div class="card">
-    <div class="card-body">
-        <h5 class="mb-3">Laporan Penjualan</h5>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="mb-3">Laporan Penjualan</h5>
 
-        <form method="GET" class="row g-2 mb-3" action="{{ route('report.pdf') }}" target="_blank">
-            <div class="col-md-2">
-                <select name="type" id="reportType" class="form-select">
-                    <option value="daily" {{ (isset($type) && $type=='daily') ? 'selected' : '' }}>Harian</option>
-                    <option value="weekly" {{ (isset($type) && $type=='weekly') ? 'selected' : '' }}>Mingguan</option>
-                    <option value="monthly" {{ (isset($type) && $type=='monthly') ? 'selected' : '' }}>Bulanan</option>
-                </select>
-            </div>
+            <form method="GET" class="row g-2 mb-3" action="{{ route('report.pdf') }}" target="_blank">
+                <div class="col-md-2">
+                    <select name="type" id="reportType" class="form-select">
+                        <option value="custom" {{ isset($type) && $type == 'custom' ? 'selected' : '' }}>Rentang Tanggal
+                        </option>
+                        <option value="daily" {{ isset($type) && $type == 'daily' ? 'selected' : '' }}>Harian</option>
+                        <option value="monthly" {{ isset($type) && $type == 'monthly' ? 'selected' : '' }}>Bulanan</option>
+                    </select>
+                </div>
 
-            <div class="col-md-3" id="inputDate">
-                <input type="date" name="date" value="{{ $date ?? \Carbon\Carbon::today()->toDateString() }}" class="form-control">
-            </div>
+                <div class="col-md-5 d-flex align-items-center gap-2" id="inputRange">
+                    <input type="date" name="start_date"
+                        value="{{ $start_date ?? \Carbon\Carbon::today()->toDateString() }}" class="form-control">
+                    <span>s/d</span>
+                    <input type="date" name="end_date" value="{{ $end_date ?? \Carbon\Carbon::today()->toDateString() }}"
+                        class="form-control">
+                </div>
 
-            <div class="col-md-3 d-none" id="inputMonth">
-                <input type="month" name="month" value="{{ $month ?? \Carbon\Carbon::now()->format('Y-m') }}" class="form-control">
-            </div>
+                <div class="col-md-3 d-none" id="inputDate">
+                    <input type="date" name="date" value="{{ $date ?? \Carbon\Carbon::today()->toDateString() }}"
+                        class="form-control">
+                </div>
 
-            <div class="col-md-2">
-                <button class="btn btn-primary">Tampilkan</button>
-                <button type="submit" class="btn btn-danger ms-2">Cetak PDF</button>
-            </div>
-        </form>
+                <div class="col-md-3 d-none" id="inputMonth">
+                    <input type="month" name="month" value="{{ $month ?? \Carbon\Carbon::now()->format('Y-m') }}"
+                        class="form-control">
+                </div>
 
-        <hr>
+                <div class="col-md-3">
+                    <button type="submit" name="action" value="view" class="btn btn-primary"
+                        onclick="this.form.target='_self';">Tampilkan</button>
+                    <button type="submit" name="action" value="pdf" class="btn btn-danger ms-2"
+                        onclick="this.form.target='_blank';">Cetak PDF</button>
+                </div>
+            </form>
 
-        <div class="mb-3"><strong>{{ $label ?? 'Harian' }}</strong></div>
+            <hr>
+        
+        @section('js')
+            <script>
+                document.getElementById('reportType').addEventListener('change', function() {
+                    const type = this.value;
 
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Kode Transaksi</th>
-                    <th>Total Harga</th>
-                    <th>Tanggal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($transactions as $trx)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $trx->transaction_code ?? $trx->kode_transaksi ?? '-' }}</td>
-                    <td>Rp {{ number_format($trx->total_price ?? $trx->total ?? $trx->total_harga ?? 0, 0, ',', '.') }}</td>
-                    <td>{{ \Carbon\Carbon::parse($trx->created_at)->format('d-m-Y') }}</td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="4" class="text-center">Tidak ada transaksi</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                    // Sembunyikan semua input dulu
+                    document.getElementById('inputRange').classList.add('d-none');
+                    document.getElementById('inputDate').classList.add('d-none');
+                    document.getElementById('inputMonth').classList.add('d-none');
 
-        <h5 class="mt-3">
-            Total Penjualan:
-            <strong>
-                Rp {{ number_format($total, 0, ',', '.') }}
-            </strong>
-        </h5>
-    </div>
-</div>
-@endsection
-
-@section('js')
-<script>
-    document.getElementById('reportType').addEventListener('change', function () {
-        const type = this.value;
-        document.getElementById('inputDate').classList.toggle('d-none', type === 'monthly');
-        document.getElementById('inputMonth').classList.toggle('d-none', type !== 'monthly');
-    });
-</script>
-@endsection
+                    // Tampilkan yang dipilih
+                    if (type === 'custom') {
+                        document.getElementById('inputRange').classList.remove('d-none');
+                    } else if (type === 'daily') {
+                        document.getElementById('inputDate').classList.remove('d-none');
+                    } else if (type === 'monthly') {
+                        document.getElementById('inputMonth').classList.remove('d-none');
+                    }
+                });
+            </script>
+        @endsection
